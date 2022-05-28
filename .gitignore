@@ -1,0 +1,4 @@
+pathfinding
+*.o
+.idea
+build

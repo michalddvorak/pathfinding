@@ -1,19 +1,24 @@
+BUILDDIR         = build
+SRCDIR           = src
 CXXFLAGS         = -std=c++17 -Wall -pedantic -Wextra -g
-
+DEPFLAGS         = -MT $@ -MMD -MP -MF $(BUILDDIR)/$*.d
 PROG             = pathfinding
+SRCFILES         = $(shell find $(SRCDIR) -name "*.cpp")
+OBJS             = $(SRCFILES:%.cpp=./$(BUILDDIR)/%.o)
+DEPS             = $(SRCFILES:%.cpp=./$(BUILDDIR)/%.d)
 
-OBJS             = 
 
+compile: $(PROG)
 
-all: $(PROG)
+$(PROG) : $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(PROG) $(OBJS)
 
-$(PROG) : main.cpp $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(PROG) main.cpp $(OBJS)
-
-depend:
-	$(CXX) *.cpp -MM > .depend
-
-include .depend
+$(BUILDDIR)/%.o : %.cpp $(BUILDDIR)/%.d
+	@mkdir -p $$(dirname $@)
+	$(CXX) $(CXXFLAGS) $(DEPFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(OBJS) $(PROG)
+	rm -rf $(BUILDDIR) $(PROG)
+
+$(DEPS):
+include $(wildcard $(DEPS))
