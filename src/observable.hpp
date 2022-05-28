@@ -3,13 +3,14 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <type_traits>
 
 template<typename ... UpdateArgs>
 class observer
 {
  public:
 	virtual ~observer() = default;
-	virtual void update(const UpdateArgs& ...) = 0;
+	virtual void update(UpdateArgs ...) = 0;
 };
 
 template<typename... NotifyArgs>
@@ -21,7 +22,7 @@ class observable
 	{
 		m_observers.push_back(move(observer));
 	}
-	void notify_observers(const NotifyArgs& ... args)
+	void notify_observers(NotifyArgs ... args)
 	{
 		for(const auto& observer: m_observers)
 			observer->update(args ...);
