@@ -5,30 +5,30 @@
 #include <algorithm>
 #include <type_traits>
 
-template<typename ... UpdateArgs>
+template<typename ... Args>
 class observer
 {
  public:
 	virtual ~observer() = default;
-	virtual void update(UpdateArgs ...) = 0;
+	virtual void on_event(Args ...) = 0;
 };
 
-template<typename... NotifyArgs>
-class observable
+template<typename... Args>
+class event
 {
  public:
-	virtual ~observable() = default;
-	void register_observer(std::unique_ptr<observer<NotifyArgs...>> observer)
+	event& register_observer(observer<Args...>* observer)
 	{
-		m_observers.push_back(move(observer));
+		m_observers.push_back(observer);
+		return *this;
 	}
-	void notify_observers(NotifyArgs ... args)
+	void trigger(Args ... args)
 	{
 		for(const auto& observer: m_observers)
-			observer->update(args ...);
+			observer->on_event(args ...);
 	}
  private:
-	std::vector<std::unique_ptr<observer<NotifyArgs...>>> m_observers;
+	std::vector<observer<Args...>*> m_observers;
 };
 
 

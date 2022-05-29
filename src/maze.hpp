@@ -18,5 +18,6 @@ struct maze
 	static maze read_from_stream(std::istream& is);
 	matrix<maze_object> m_mat;
 	coord m_start;
+	coord m_end;
 };
 

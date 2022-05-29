@@ -3,14 +3,9 @@
 #include "pf_algorithm.hpp"
 
 
-class initial_printer : public observer<const maze&>
+class printer : public observer<const maze&>, public observer<algorithm_state, coord, const maze&>
 {
  public:
-	void update(const maze& maze) override;
-};
-
-class updating_printer : public observer<algorithm_state, coord>
-{
- public:
-	void update(algorithm_state st, coord coord) override;
+	void on_event(const maze& maze) override;
+	void on_event(algorithm_state st, coord coord, const maze& maze) override;
 };

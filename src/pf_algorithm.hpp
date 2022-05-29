@@ -13,12 +13,13 @@ enum class algorithm_state
 	path
 };
 
-class pf_algorithm : public observable<algorithm_state, coord>,
-					 public observable<const maze&>
+class pf_algorithm
 {
  public:
 	pf_algorithm(maze maze);
 	virtual void run() = 0;
+	event<algorithm_state, coord, const maze&> change;
+	event<const maze&> start;
  protected:
 	maze m_maze;
 	matrix<algorithm_state> m_state;
