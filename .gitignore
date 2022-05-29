@@ -2,3 +2,4 @@ pathfinding
 *.o
 .idea
 build
+exe
