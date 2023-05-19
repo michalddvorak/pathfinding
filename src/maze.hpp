@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include "matrix.hpp"
-#include "expected.hpp"
+#include "utility/expected.hpp"
 
 enum class maze_object
 {

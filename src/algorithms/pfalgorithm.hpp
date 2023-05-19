@@ -1,7 +1,7 @@
 #pragma once
 
-#include "maze.hpp"
-#include "event.hpp"
+#include "../maze.hpp"
+#include "../utility/event.hpp"
 
 #define EVENT(name, ...) \
 public: \
@@ -21,16 +21,16 @@ event<__VA_ARGS__> name;
 
 //todo write it manually :)
 
-struct pf_algorithm
+class pf_algorithm
 {
  public:
 	virtual ~pf_algorithm() = default;
-	pf_algorithm(maze&& maze);
-	virtual void run() = 0;
- 	const maze& get_maze() const;
+	virtual void run(const maze& maze) = 0;
  protected:
-	maze maze_;
-	void reconstruct_path(const matrix<coord>& prev);
+	using seen_matrix = matrix<int8_t>;
+	using prev_matrix = matrix<coord>;
+	std::pair<prev_matrix,seen_matrix> fresh_all(const maze& maze);
+	void reconstruct_path(const maze& maze, const matrix<coord>& prev);
  
  EVENT(step)
  EVENT(fresh, const coord&)

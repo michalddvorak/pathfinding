@@ -66,11 +66,11 @@ struct expected
 	{
 		return std::get<unexpected>(value_).err;
 	}
- private:
 	Err& error()
 	{
 		return std::get<unexpected>(value_).err;
 	}
+ private:
 	expected(std::variant<T, unexpected> v) : value_(std::move(v)) { }
 	std::variant<T, unexpected> value_ = T();
 };
@@ -113,6 +113,10 @@ struct expected<void, Err>
 		return value_ == std::nullopt;
 	}
 	const Err& error() const
+	{
+		return value_->err;
+	}
+	Err& error()
 	{
 		return value_->err;
 	}
