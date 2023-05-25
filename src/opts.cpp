@@ -11,10 +11,12 @@
 using namespace std::string_literals;
 
 
-
 expected<opt> parse_neighborhood_order(const std::string& arg)
 {
-
+	opt_neighborhood_order nb;
+	if(auto res = nb.set_permutation(arg); !res)
+		return err<opt>(res.error());
+	return just(opt {nb});
 }
 
 std::variant<help_tag, expected<options>> parse_options(int argc, char* argv[])

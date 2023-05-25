@@ -16,18 +16,19 @@ auto make_algorithm(const std::vector<opt>& options)
 	return just<std::unique_ptr<pf_algorithm>>(std::make_unique<T>(options));
 }
 
+bool equals_insensitive(const std::string& a, const std::string& b)
+{
+	return strcasecmp(a.c_str(), b.c_str()) == 0;
+}
+
 
 expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, const std::vector<opt>& options)
 {
 	using namespace std::string_literals;
 	
-	auto is = [&](const char* alg) {
-		return strcasecmp(name.c_str(), alg) == 0;
-	};
-	
-	if(is("bfs"))
+	if(equals_insensitive(name, "bfs"))
 		return make_algorithm<bfs>(options);
-	else if(is("dfs"))
+	else if(equals_insensitive(name, "dfs"))
 		return make_algorithm<dfs>(options);
 	return err<std::unique_ptr<pf_algorithm>>("unknown algorithm \""s + name + "\"");
 }
@@ -35,7 +36,8 @@ expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, 
 
 void print_usage(const char* name)
 {
-	std::cout << "usage: " << name << " <filename> <algorithm>" << std::endl;
+	//TODO: lepší
+	std::cout << "usage: " << name << " <filename> <algorithm> [-n|--neighborhood] lrud" << std::endl;
 }
 
 //todo: argumenty (rychlost, apod.)
