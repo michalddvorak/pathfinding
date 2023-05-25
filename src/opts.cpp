@@ -6,7 +6,6 @@
 #include <getopt.h>
 
 #include "utility/expected.hpp"
-#include "coord.hpp"
 
 using namespace std::string_literals;
 
