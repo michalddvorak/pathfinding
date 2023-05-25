@@ -66,9 +66,9 @@ expected<maze> read_maze(maze&& _maze, std::istream& is)
 expected<maze> maze::load_from_stream(std::istream&& is)
 {
 	size_t rows, cols, starti, startj, endi, endj;
-	return read_line(is, "could not parse dimensions")
+	return read_line(is, "could not parse_options dimensions")
 			.and_then(parse_dimensions, rows, cols)
-			.and_then(read_line, is, "could not parse start coords")
+			.and_then(read_line, is, "could not parse_options start coords")
 			.and_then(parse_start_end, starti, startj, endi, endj)
 			.and_then(check_dims, starti, startj, endi, endj, rows, cols)
 			.and_then(read_maze, is);

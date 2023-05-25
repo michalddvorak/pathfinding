@@ -2,11 +2,11 @@
 
 coord coord::down() const
 {
-	return {i - 1, j};
+	return {i + 1, j}; //(0,0) is upper left corner
 }
 coord coord::up() const
 {
-	return {i + 1, j};
+	return {i - 1, j};
 }
 coord coord::left() const
 {

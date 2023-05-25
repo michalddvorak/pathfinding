@@ -1,16 +1,18 @@
 #include "dfs.hpp"
 #include <stack>
 
+#include "../utility/overload.hpp"
+
 void dfs::run(const maze& maze)
 {
-	std::array neighborhoods = {&coord::left, &coord::up, &coord::right, &coord::down};
-	using iter = decltype(neighborhoods.begin());
+	
+	using iter = std::remove_reference_t<decltype(neighborhood_order_.get_order())>::const_iterator;
 	std::stack<std::tuple<coord, iter, iter>> q;
 	
 	auto [prev, seen] = fresh_all(maze);
 	
 	auto open_node = [&](const coord& node, const std::optional<coord>& parent = std::nullopt) {
-		q.emplace(node, neighborhoods.begin(), neighborhoods.end());
+		q.emplace(node, neighborhood_order_.get_order().begin(), neighborhood_order_.get_order().end());
 		seen(node) = true;
 		if(parent)
 			prev(node) = *parent;
@@ -40,4 +42,12 @@ void dfs::run(const maze& maze)
 	}
 	if(seen(maze.end))
 		reconstruct_path(maze, prev);
+}
+dfs::dfs(const std::vector<opt>& options)
+{
+	for(const auto& option: options)
+		std::visit(overload {
+				[&](const opt_neighborhood_order& order)mutable { neighborhood_order_ = order; },
+				[](auto&&) { }
+		}, option);
 }

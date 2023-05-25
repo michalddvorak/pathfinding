@@ -1,7 +1,13 @@
 #pragma once
+
 #include "pfalgorithm.hpp"
+#include "../opts.hpp"
 
 class dfs : public pf_algorithm
 {
-	void run(const maze &maze) override;
+ public:
+	dfs(const std::vector<opt>& options);
+	void run(const maze& maze) override;
+ private:
+	opt_neighborhood_order neighborhood_order_;
 };

@@ -1,4 +1,5 @@
 #include "bfs.hpp"
+#include "../utility/overload.hpp"
 #include <queue>
 
 void bfs::run(const maze& maze)
@@ -23,8 +24,9 @@ void bfs::run(const maze& maze)
 		q.pop();
 		if(pos == maze.end)
 			break;
-		for(auto&& neigh: {pos.left(), pos.right(), pos.up(), pos.down()})
+		for(auto&& neigh_fn: neighborhood_order_.get_order())
 		{
+			auto&& neigh = (pos.*neigh_fn)();
 			if(maze.mat.valid(neigh) && !seen(neigh) && maze.mat(neigh) == maze_object::free)
 			{
 				on_step();
@@ -35,4 +37,12 @@ void bfs::run(const maze& maze)
 	}
 	if(seen(maze.end))
 		reconstruct_path(maze, prev);
+}
+bfs::bfs(const std::vector<opt>& options)
+{
+	for(const auto& option: options)
+		std::visit(overload {
+				[&](const opt_neighborhood_order& order)mutable { neighborhood_order_ = order; },
+				[](auto&&) { }
+		}, option);
 }

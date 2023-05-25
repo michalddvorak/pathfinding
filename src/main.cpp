@@ -8,22 +8,30 @@
 #include "algorithms/bfs.hpp"
 #include "algorithms/dfs.hpp"
 #include "io/printer.hpp"
+#include "opts.hpp"
 
-expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const char* name)
+template<typename T>
+auto make_algorithm(const std::vector<opt>& options)
+{
+	return just<std::unique_ptr<pf_algorithm>>(std::make_unique<T>(options));
+}
+
+
+expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, const std::vector<opt>& options)
 {
 	using namespace std::string_literals;
 	
 	auto is = [&](const char* alg) {
-		return strcasecmp(name, alg) == 0;
+		return strcasecmp(name.c_str(), alg) == 0;
 	};
 	
 	if(is("bfs"))
-		return just<std::unique_ptr<pf_algorithm>>(std::make_unique<bfs>());
+		return make_algorithm<bfs>(options);
 	else if(is("dfs"))
-		return just<std::unique_ptr<pf_algorithm>>(std::make_unique<dfs>());
-	//todo: more
+		return make_algorithm<dfs>(options);
 	return err<std::unique_ptr<pf_algorithm>>("unknown algorithm \""s + name + "\"");
 }
+
 
 void print_usage(const char* name)
 {
@@ -32,7 +40,6 @@ void print_usage(const char* name)
 
 //todo: argumenty (rychlost, apod.)
 //todo: další algoritmy :)
-//todo: umožnit změnit pořadí procházení sousedů (bfs i dfs)
 
 expected<std::ifstream> open_file(const std::string& filename)
 {
@@ -53,27 +60,44 @@ void run(std::unique_ptr<pf_algorithm> algorithm, const maze& maze)
 	p.set_cursor({maze.mat.rows(), 0});
 }
 
+
 int main(int argc, char* argv[])
 {
-	if(argc != 3)
+	auto parse_result = parse_options(argc, argv);
+	if(std::holds_alternative<help_tag>(parse_result))
+	{
+		print_usage(argv[0]);
+		return 0;
+	}
+	
+	auto options_result = std::get<expected<options>>(parse_result);
+	if(!options_result)
+	{
+		std::cout << "error: " << options_result.error() << std::endl;
+		return 1;
+	}
+	auto&& [options, nonpos_arguments] = *options_result;
+	
+	if(nonpos_arguments.size() != 2)
 	{
 		print_usage(argv[0]);
 		return 1;
 	}
 	
-	auto maze = open_file(argv[1])
+	
+	auto maze = open_file(nonpos_arguments[0])
 			.and_then(maze::load_from_stream);
 	
 	if(!maze)
 	{
-		std::cout << "error: " << maze.error();
+		std::cout << "error: " << maze.error() << std::endl;
 		return 1;
 	}
-	auto algorithm = pick_algorithm(argv[2]);
+	auto algorithm = pick_algorithm(nonpos_arguments[1], options);
 	
 	if(!algorithm)
 	{
-		std::cout << "error: " << maze.error();
+		std::cout << "error: " << maze.error() << std::endl;
 		return 1;
 	}
 	run(std::move(*algorithm), *maze);
