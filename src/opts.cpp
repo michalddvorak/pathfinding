@@ -1,8 +1,7 @@
 #include "opts.hpp"
 
 #include <string>
-#include <map>
-
+#include <sstream>
 #include <getopt.h>
 
 #include "utility/expected.hpp"
@@ -17,20 +16,29 @@ expected<opt> parse_neighborhood_order(const std::string& arg)
 		return err<opt>(res.error());
 	return just(opt {nb});
 }
+expected<opt> parse_milliseconds(const std::string& arg)
+{
+	std::stringstream ss {arg};
+	unsigned int x;
+	if(!(ss >> x))
+		return err<opt>("could not parse milliseconds from \"" + arg + "\"");
+	return just(opt {opt_sleep_time {x}});
+}
 
 std::variant<help_tag, expected<options>> parse_options(int argc, char* argv[])
 {
 	
 	static const struct option long_opts[] = {
 			{.name = "neighborhood", .has_arg = required_argument, .flag=nullptr, .val = 'n'},
-			{.name = "help", .has_arg = no_argument, .flag = nullptr, .val = 'h'}
+			{.name = "help", .has_arg = no_argument, .flag = nullptr, .val = 'h'},
+			{.name = "sleep_time", .has_arg = required_argument, .flag=nullptr, .val='s'}
 	};
 	std::vector<opt> opts;
 	std::vector<std::string> nonpos_args;
 	
 	int opt_idx = 0;
 	int c;
-	while((c = getopt_long(argc, argv, "n:h", long_opts, &opt_idx)) != -1)
+	while((c = getopt_long(argc, argv, "n:s:h", long_opts, &opt_idx)) != -1)
 	{
 		switch(c)
 		{
@@ -44,6 +52,14 @@ std::variant<help_tag, expected<options>> parse_options(int argc, char* argv[])
 			}
 			case 'h':
 				return help_tag {};
+			case 's':
+			{
+				auto res = parse_milliseconds(optarg);
+				if(!res)
+					return err<options>("error parsing sleep time option: "s + res.error());
+				opts.push_back(*res);
+				break;
+			}
 		}
 	}
 	

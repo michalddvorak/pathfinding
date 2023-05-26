@@ -2,6 +2,7 @@
 
 #include "../maze.hpp"
 #include "../utility/event.hpp"
+#include "../opts.hpp"
 
 #define EVENT(name, ...) \
 public: \

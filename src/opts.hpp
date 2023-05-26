@@ -35,7 +35,13 @@ struct opt_neighborhood_order
 	std::array<coord(coord::*)() const, 4> ord = {&coord::left, &coord::down, &coord::right, &coord::up};
 };
 
-using opt = std::variant<opt_neighborhood_order>;
+struct opt_sleep_time
+{
+	unsigned int amount;
+};
+
+
+using opt = std::variant<opt_neighborhood_order, opt_sleep_time>;
 
 struct help_tag { };
 

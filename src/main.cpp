@@ -9,6 +9,7 @@
 #include "algorithms/dfs.hpp"
 #include "io/printer.hpp"
 #include "opts.hpp"
+#include "runner.hpp"
 
 template<typename T>
 auto make_algorithm(const std::vector<opt>& options)
@@ -37,9 +38,10 @@ expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, 
 void print_usage(const char* name)
 {
 	//TODO: lepší
-	std::cout << "usage: " << name << " <filename> <algorithm> [-n|--neighborhood] lrud" << std::endl;
+	std::cout << "usage: " << name << " <filename> <algorithm> [-n|--neighborhood] (lrud)" << std::endl;
 }
 
+//todo: testy
 //todo: argumenty (rychlost, apod.)
 //todo: další algoritmy :)
 
@@ -51,18 +53,6 @@ expected<std::ifstream> open_file(const std::string& filename)
 	return just(std::move(ifs));
 }
 
-void run(std::unique_ptr<pf_algorithm> algorithm, const maze& maze)
-{
-	//todo statistiky
-	
-	printer p(&maze, algorithm.get());
-	p.clear();
-	p.print_maze();
-	algorithm->run(maze);
-	p.set_cursor({maze.mat.rows(), 0});
-}
-
-
 int main(int argc, char* argv[])
 {
 	auto parse_result = parse_options(argc, argv);
@@ -73,9 +63,10 @@ int main(int argc, char* argv[])
 	}
 	
 	auto options_result = std::get<expected<options>>(parse_result);
+	
 	if(!options_result)
 	{
-		std::cout << "error: " << options_result.error() << std::endl;
+		std::cout << "error parsing options: " << options_result.error() << std::endl;
 		return 1;
 	}
 	auto&& [options, nonpos_arguments] = *options_result;
@@ -86,22 +77,22 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	
-	
 	auto maze = open_file(nonpos_arguments[0])
 			.and_then(maze::load_from_stream);
 	
 	if(!maze)
 	{
-		std::cout << "error: " << maze.error() << std::endl;
+		std::cout << "error loading the maze: " << maze.error() << std::endl;
 		return 1;
 	}
 	auto algorithm = pick_algorithm(nonpos_arguments[1], options);
 	
 	if(!algorithm)
 	{
-		std::cout << "error: " << maze.error() << std::endl;
+		std::cout << "error picking algorithm: " << maze.error() << std::endl;
 		return 1;
 	}
-	run(std::move(*algorithm), *maze);
+	runner r(std::move(*algorithm), *maze, options);
+	r.run();
 	return 0;
 }

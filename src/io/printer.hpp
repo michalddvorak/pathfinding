@@ -9,6 +9,7 @@
 #include "term.hpp"
 #include "../utility/event.hpp"
 
+using namespace std::chrono_literals;
 class printer : public term
 {
  private:
@@ -21,9 +22,8 @@ class printer : public term
 	}
 	auto step_callback()
 	{
-		return []() {
-			using namespace std::chrono_literals;
-			std::this_thread::sleep_for(15ms);
+		return [&]() {
+			std::this_thread::sleep_for(sleep_duration_);
 		};
 	}
 	auto open_callback()
@@ -48,7 +48,7 @@ class printer : public term
 		};
 	}
  public:
-	printer(const maze * maze, pf_algorithm * algorithm);
+	printer(const maze* maze, pf_algorithm* algorithm, const std::vector<opt>& options);
 	void print_maze()
 	{
 		set_cursor({0, 0});
@@ -73,6 +73,9 @@ class printer : public term
 		print(maze_->end, with_color(255, 255, 0, "E"));
 	}
  private:
-	const maze * maze_;
-	pf_algorithm * algorithm_;
+	void parse_options(const std::vector<opt>& options);
+	
+	std::chrono::milliseconds sleep_duration_ = 15ms;
+	const maze* maze_;
+	const pf_algorithm* algorithm_;
 };

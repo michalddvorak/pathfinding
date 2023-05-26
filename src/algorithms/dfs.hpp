@@ -9,5 +9,6 @@ class dfs : public pf_algorithm
 	dfs(const std::vector<opt>& options);
 	void run(const maze& maze) override;
  private:
+	void parse_options(const std::vector<opt>& options);
 	opt_neighborhood_order neighborhood_order_;
 };

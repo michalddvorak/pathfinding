@@ -9,5 +9,6 @@ class bfs : public pf_algorithm
 	void run(const maze& maze) override;
 	bfs(const std::vector<opt>& options);
  private:
+	void parse_options(const std::vector<opt>& options);
 	opt_neighborhood_order neighborhood_order_;
 };

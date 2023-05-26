@@ -4,4 +4,4 @@ struct overload : Ts ...
 {
 	using Ts::operator () ...;
 };
-template<class... Ts> overload(Ts...) -> overload<Ts...>;
+template<typename... Ts> overload(Ts...) -> overload<Ts...>;

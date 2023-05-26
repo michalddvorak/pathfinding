@@ -45,6 +45,10 @@ void dfs::run(const maze& maze)
 }
 dfs::dfs(const std::vector<opt>& options)
 {
+	parse_options(options);
+}
+void dfs::parse_options(const std::vector<opt>& options)
+{
 	for(const auto& option: options)
 		std::visit(overload {
 				[&](const opt_neighborhood_order& order)mutable { neighborhood_order_ = order; },
