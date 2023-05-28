@@ -45,22 +45,17 @@ void term::clear()
 {
 	std::cout << "\033[2J";
 }
-void term::set_cursor(const coord& p) {
+void term::set_cursor(const coord& p)
+{
 	std::cout << "\033[" << p.i + 1 << ';' << p.j + 1 << 'H';
 }
-term::~term() {
+term::~term()
+{
 	restore_terminal();
 	show_cursor();
 }
-term::term() {
+term::term()
+{
 	hide_cursor();
 	init_terminal();
-}
-std::string term::with_color(int r, int g, int b, const std::string& what)
-{
-	return color_fg(r, g, b) + what + ATTR_END;
-}
-std::string term::with_blink(const std::string& what)
-{
-	return BLINK + what + ATTR_END;
 }

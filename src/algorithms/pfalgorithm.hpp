@@ -20,7 +20,7 @@ void on_##name(Args&& ... args) \
 private: \
 event<__VA_ARGS__> name;
 
-//todo write it manually :)
+
 
 class pf_algorithm
 {

@@ -16,6 +16,27 @@ void printer::parse_options(const std::vector<opt>& options)
 	for(const auto& option: options)
 		std::visit(overload {
 				[&](const opt_sleep_time& sleep_time)mutable { sleep_duration_ = std::chrono::milliseconds(sleep_time.amount); },
-				[](auto&&) { }
 		}, option);
+}
+void printer::print_maze() {
+	set_cursor({0, 0});
+	for(size_t i = 0; i < maze_->mat.rows(); ++i)
+	{
+		for(size_t j = 0; j < maze_->mat.cols(); ++j)
+		{
+			set_cursor({i, j});
+			switch(maze_->mat(i, j))
+			{
+				case maze_object::wall:
+					std::cout << 'X';
+					break;
+				case maze_object::free:
+					std::cout << ' ';
+					break;
+			}
+		}
+		std::cout << '\n';
+	}
+	print(maze_->start, with_fg_color(255, 255, 0)("S"));
+	print(maze_->end, with_fg_color(255, 255, 0)("E"));
 }

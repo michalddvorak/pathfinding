@@ -17,7 +17,7 @@ class printer : public term
 	{
 		return [&](const coord& p) {
 			if(p != maze_->start && p != maze_->end)
-				print(p, with_blink(with_color(0, 0, 255, "o")));
+				print(p, with_blink()(with_fg_color(0, 0, 255)("o")));
 		};
 	}
 	auto step_callback()
@@ -30,52 +30,30 @@ class printer : public term
 	{
 		return [&](const coord& p) {
 			if(p != maze_->start && p != maze_->end)
-				print(p, with_color(255, 0, 0, "O"));
+				print(p, with_fg_color(255, 0, 0)("O"));
 		};
 	}
 	auto closed_callback()
 	{
 		return [&](const coord& p) {
 			if(p != maze_->start && p != maze_->end)
-				print(p, with_color(255, 0, 255, "#"));
+				print(p, with_fg_color(255, 0, 255)("#"));
 		};
 	}
 	auto fresh_callback()
 	{
 		return [&](const coord& p) {
 			if(p != maze_->start && p != maze_->end)
-				print(p, " ");
+				print(p, ".");
 		};
 	}
  public:
 	printer(const maze* maze, pf_algorithm* algorithm, const std::vector<opt>& options);
-	void print_maze()
-	{
-		set_cursor({0, 0});
-		for(size_t i = 0; i < maze_->mat.rows(); ++i)
-		{
-			for(size_t j = 0; j < maze_->mat.cols(); ++j)
-			{
-				set_cursor({i, j});
-				switch(maze_->mat(i, j))
-				{
-					case maze_object::wall:
-						std::cout << 'X';
-						break;
-					case maze_object::free:
-						std::cout << ' ';
-						break;
-				}
-			}
-			std::cout << '\n';
-		}
-		print(maze_->start, with_color(255, 255, 0, "S"));
-		print(maze_->end, with_color(255, 255, 0, "E"));
-	}
+	void print_maze();
  private:
 	void parse_options(const std::vector<opt>& options);
-	
 	std::chrono::milliseconds sleep_duration_ = 15ms;
+	
 	const maze* maze_;
 	const pf_algorithm* algorithm_;
 };
