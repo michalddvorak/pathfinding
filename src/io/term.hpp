@@ -27,7 +27,7 @@ struct term
 		};
 	}
 	
-	static constexpr auto with_bg_color(int r, int g, int b, const std::string& what)
+	static constexpr auto with_bg_color(int r, int g, int b)
 	{
 		return [=](const std::string& what) {
 			return color_bg(r, g, b) + what + ATTR_END;

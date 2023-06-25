@@ -1,26 +1,12 @@
 #include <thread>
 #include <sstream>
 #include <array>
-#include <cstring>
-#include <fstream>
 
 #include "utility/expected.hpp"
 #include "algorithms/bfs.hpp"
 #include "algorithms/dfs.hpp"
-#include "io/printer.hpp"
-#include "opts.hpp"
+#include "options/opts.hpp"
 #include "runner.hpp"
-
-template<typename T>
-auto make_algorithm(const std::vector<opt>& options)
-{
-	return just<std::unique_ptr<pf_algorithm>>(std::make_unique<T>(options));
-}
-
-bool equals_insensitive(const std::string& a, const std::string& b)
-{
-	return strcasecmp(a.c_str(), b.c_str()) == 0;
-}
 
 
 expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, const std::vector<opt>& options)
@@ -28,9 +14,9 @@ expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, 
 	using namespace std::string_literals;
 	
 	if(equals_insensitive(name, "bfs"))
-		return make_algorithm<bfs>(options);
+		return pf_algorithm::make<bfs>(options);
 	else if(equals_insensitive(name, "dfs"))
-		return make_algorithm<dfs>(options);
+		return pf_algorithm::make<dfs>(options);
 	return err<std::unique_ptr<pf_algorithm>>("unknown algorithm \""s + name + "\"");
 }
 
@@ -45,13 +31,7 @@ void print_usage(const char* name)
 //todo: argumenty (rychlost, apod.)
 //todo: další algoritmy :)
 
-expected<std::ifstream> open_file(const std::string& filename)
-{
-	std::ifstream ifs {filename};
-	if(!ifs.is_open())
-		return err<std::ifstream>("Could not open file \"" + filename + "\"");
-	return just(std::move(ifs));
-}
+
 
 int main(int argc, char* argv[])
 {
@@ -69,15 +49,14 @@ int main(int argc, char* argv[])
 		std::cout << "error parsing options: " << options_result.error() << std::endl;
 		return 1;
 	}
-	auto&& [options, nonpos_arguments] = *options_result;
 	
-	if(nonpos_arguments.size() != 2)
+	if(options_result->nonpositional_arguments.size() != 2)
 	{
 		print_usage(argv[0]);
 		return 1;
 	}
 	
-	auto maze = open_file(nonpos_arguments[0])
+	auto maze = open_file(options_result->nonpositional_arguments[0])
 			.and_then(maze::load_from_stream);
 	
 	if(!maze)
@@ -85,14 +64,14 @@ int main(int argc, char* argv[])
 		std::cout << "error loading the maze: " << maze.error() << std::endl;
 		return 1;
 	}
-	auto algorithm = pick_algorithm(nonpos_arguments[1], options);
+	auto algorithm = pick_algorithm(options_result->nonpositional_arguments[1], options_result->options);
 	
 	if(!algorithm)
 	{
 		std::cout << "error picking algorithm: " << maze.error() << std::endl;
 		return 1;
 	}
-	runner r(std::move(*algorithm), *maze, options);
+	runner r(std::move(*algorithm), *maze, options_result->options);
 	r.run();
 	return 0;
 }

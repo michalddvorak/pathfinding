@@ -5,11 +5,10 @@
 #include <thread>
 #include <sstream>
 
-#include "../algorithms/pfalgorithm.hpp"
+#include "../algorithms/pf_algorithm.hpp"
 #include "term.hpp"
 #include "../utility/event.hpp"
 
-using namespace std::chrono_literals;
 class printer : public term
 {
  private:
@@ -52,7 +51,7 @@ class printer : public term
 	void print_maze();
  private:
 	void parse_options(const std::vector<opt>& options);
-	std::chrono::milliseconds sleep_duration_ = 15ms;
+	std::chrono::milliseconds sleep_duration_ = std::chrono::milliseconds(15);
 	
 	const maze* maze_;
 	const pf_algorithm* algorithm_;

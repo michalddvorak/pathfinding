@@ -54,6 +54,14 @@ struct expected
 	{
 		return value();
 	}
+	const T* operator ->() const
+	{
+		return &value();
+	}
+	T* operator ->()
+	{
+		return &value();
+	}
 	const T& value() const
 	{
 		return std::get<T>(value_);
@@ -84,7 +92,7 @@ struct expected<void, Err>
 		Err err;
 	};
  public:
-	expected(bool v = true, std::string msg = "") : value_ {v ? static_cast<std::optional<unexpected>>(std::nullopt)
+	expected(bool v = true, std::string msg = "") : value_ {v ? std::optional<unexpected> {std::nullopt}
 															  : unexpected {std::move(msg)}} { }
 	template<typename ...Args>
 	static expected just(Args&& ... args)
@@ -108,6 +116,14 @@ struct expected<void, Err>
 	
 	void operator *() const { }
 	void value() const { }
+	nullptr_t operator ->() const
+	{
+		return nullptr;
+	}
+	nullptr_t operator ->()
+	{
+		return nullptr;
+	}
 	operator bool() const
 	{
 		return value_ == std::nullopt;
@@ -127,6 +143,7 @@ struct expected<void, Err>
 
 expected() -> expected<void>;
 
+
 template<typename T = void, typename Err = std::string>
 auto just()
 {
@@ -144,4 +161,24 @@ template<typename T = void, typename Err = std::string, typename ...Args>
 auto err(Args&& ... args)
 {
 	return expected<T, Err>::err(std::forward<Args>(args)...);
+}
+
+/**
+ * @brief Takes a function returning bool and lifts it to the expected<void> world with given error message
+ * @tparam Fn
+ * @tparam Err
+ * @param f
+ * @param error_msg
+ * @return
+ */
+
+template<typename Fn, typename Err = std::string>
+auto boolean_lift(Fn&& f, const Err& error_msg)
+{
+	return [&](auto&& ... args)->expected<void, Err> {
+		if(std::forward<Fn>(f)(std::forward<decltype(args)>(args)...))
+			return expected<void, Err>::just();
+		else
+			return expected<void, Err>::err(error_msg);
+	};
 }

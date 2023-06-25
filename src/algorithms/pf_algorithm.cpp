@@ -1,4 +1,4 @@
-#include "pfalgorithm.hpp"
+#include "pf_algorithm.hpp"
 
 void pf_algorithm::reconstruct_path(const maze& maze, const matrix<coord>& prev)
 {

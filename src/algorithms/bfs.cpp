@@ -24,9 +24,9 @@ void bfs::run(const maze& maze)
 		q.pop();
 		if(pos == maze.end)
 			break;
-		for(auto&& neigh_fn: neighborhood_order_.get_order())
+		for(auto&& neigh_fn: neighborhood_order_.order)
 		{
-			auto&& neigh = (pos.*neigh_fn)();
+			auto&& neigh = neigh_fn(pos);
 			if(maze.mat.valid(neigh) && !seen(neigh) && maze.mat(neigh) == maze_object::free)
 			{
 				on_step();

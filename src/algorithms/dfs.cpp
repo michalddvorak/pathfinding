@@ -6,13 +6,13 @@
 void dfs::run(const maze& maze)
 {
 	
-	using iter = std::remove_reference_t<decltype(neighborhood_order_.get_order())>::const_iterator;
+	using iter = decltype(std::begin(neighborhood_order_.order));
 	std::stack<std::tuple<coord, iter, iter>> q;
 	
 	auto [prev, seen] = fresh_all(maze);
 	
 	auto open_node = [&](const coord& node, const std::optional<coord>& parent = std::nullopt) {
-		q.emplace(node, neighborhood_order_.get_order().begin(), neighborhood_order_.get_order().end());
+		q.emplace(node, std::begin(neighborhood_order_.order), std::end(neighborhood_order_.order));
 		seen(node) = true;
 		if(parent)
 			prev(node) = *parent;
@@ -29,7 +29,7 @@ void dfs::run(const maze& maze)
 			break;
 		if(begin != end)
 		{
-			auto neigh = (pos.*(*begin++))();
+			auto neigh = (*begin++)(pos);
 			if(maze.mat.valid(neigh) && !seen(neigh) && maze.mat(neigh) == maze_object::free)
 			{
 				on_step();

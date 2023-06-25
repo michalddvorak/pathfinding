@@ -1,4 +1,7 @@
 #pragma once
+
+#include <type_traits>
+
 namespace detail
 {
 	struct impossible_struct { };

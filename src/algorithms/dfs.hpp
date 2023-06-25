@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pfalgorithm.hpp"
-#include "../opts.hpp"
+#include "pf_algorithm.hpp"
+#include "../options/opts.hpp"
 
 class dfs : public pf_algorithm
 {

@@ -15,10 +15,11 @@ void printer::parse_options(const std::vector<opt>& options)
 {
 	for(const auto& option: options)
 		std::visit(overload {
-				[&](const opt_sleep_time& sleep_time)mutable { sleep_duration_ = std::chrono::milliseconds(sleep_time.amount); },
+				[&](const opt_sleep_time& sleep_time)mutable { sleep_duration_ = sleep_time.duration; },
 		}, option);
 }
-void printer::print_maze() {
+void printer::print_maze()
+{
 	set_cursor({0, 0});
 	for(size_t i = 0; i < maze_->mat.rows(); ++i)
 	{
