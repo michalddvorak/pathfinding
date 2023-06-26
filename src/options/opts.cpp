@@ -11,9 +11,10 @@ using namespace std::string_literals;
 expected<opt> parse_sleep_time(const char* arg)
 {
 	return parse<unsigned int>(arg, "could not parse milliseconds from \""s + arg + "\"")
-			.and_then([&](unsigned int x) {
-				return just(opt {opt_sleep_time {std::chrono::milliseconds(x)}});
-			});
+			.and_then(
+					[&](unsigned int x) {
+						return just(opt {opt_sleep_time {std::chrono::milliseconds(x)}});
+					});
 }
 
 expected<opt> parse_nb_order(const std::string& arg)
@@ -27,13 +28,14 @@ expected<opt> parse_nb_order(const std::string& arg)
 					{'d', &coord::down}
 			};
 	
-	return boolean_lift(is_same_up_to_permutation, "invalid permutation \"" + arg + "\"")(arg, "lrud")
-			.and_then([&]() {
-				opt_neighborhood_order result;
-				std::transform(arg.begin(), arg.end(), result.order.begin(),
-							   [&](char c) { return fns.at(c); });
-				return just(opt {result});
-			});
+	return boolean_lift(is_same_up_to_permutation, "invalid permutation \"" + arg + "\", it must be a permutation of \"lrud\"")(arg, "lrud")
+			.and_then(
+					[&]() {
+						opt_neighborhood_order result;
+						std::transform(arg.begin(), arg.end(), result.order.begin(),
+									   [&](char c) { return fns.at(c); });
+						return just(opt {result});
+					});
 }
 
 
@@ -75,23 +77,22 @@ std::variant<help_tag, expected<options>> parse_options(int argc, char* argv[])
 	//: as a first character of optstring assures that ':' is returned if argument of an option is missing
 	while((c = getopt_long(argc, argv, ":n:s:h", long_opts, &opt_idx)) != -1)
 	{
-		switch(c)
+		if(process_opt.count(c) == 1)
 		{
-			case 'n':
-			case 's':
-			{
-				if(auto res = process_option(result, process_opt.at(c)); !res)
-					return err<options>(res.error());
-				break;
-			}
-			
-			case 'h':
-				return help_tag {};
-			case '?':
-				return err<options>("unknown option "s + argv[optind - 1]);
-			case ':':
-				return err<options>("missing argument to option "s + (char)optopt);
+			auto res = process_option(result, process_opt.at(c));
+			if(!res)
+				return err<options>(res.error());
 		}
+		else
+			switch(c)
+			{
+				case 'h':
+					return help_tag {};
+				case '?':
+					return err<options>("unknown option "s + argv[optind - 1]);
+				case ':':
+					return err<options>("missing argument to option "s + (char)optopt);
+			}
 	}
 	
 	for(; optind < argc; ++optind)

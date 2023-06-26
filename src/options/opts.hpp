@@ -8,10 +8,13 @@
 #include "opt_sleep_time.hpp"
 
 
-using opt = std::variant<opt_neighborhood_order, opt_sleep_time>;
+using opt = std::variant<
+		opt_neighborhood_order,
+		opt_sleep_time
+>;
 
 struct help_tag { };
-
+//todo: namespace pro options?
 struct options
 {
 	std::vector<opt> options;

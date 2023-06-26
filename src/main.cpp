@@ -21,6 +21,12 @@ expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, 
 }
 
 
+std::string usage(const char* name)
+{
+	using namespace std::string_literals;
+	return "usage: "s + name + " <filename> <algorithm> [-n|--neighborhood] (lrud)";
+}
+
 void print_usage(const char* name)
 {
 	//TODO: lepší
@@ -43,7 +49,6 @@ int main(int argc, char* argv[])
 	}
 	
 	auto options_result = std::get<expected<options>>(parse_result);
-	
 	if(!options_result)
 	{
 		std::cout << "error parsing options: " << options_result.error() << std::endl;
@@ -58,7 +63,6 @@ int main(int argc, char* argv[])
 	
 	auto maze = open_file(options_result->nonpositional_arguments[0])
 			.and_then(maze::load_from_stream);
-	
 	if(!maze)
 	{
 		std::cout << "error loading the maze: " << maze.error() << std::endl;

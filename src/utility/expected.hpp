@@ -32,6 +32,7 @@ struct expected
 		else
 			return ret::err(std::move(error()));
 	}
+	
 	template<typename F, typename ...Args>
 	decltype(auto) and_then(F&& fn, Args&& ... args)&
 	{
@@ -114,6 +115,18 @@ struct expected<void, Err>
 			return ret::err(error());
 	}
 	
+	template<typename F>
+	decltype(auto) operator >>=(F&& fn)
+	{
+		return [&](auto&& ... args) {
+			using ret = decltype(std::forward<F>(fn)(std::forward<decltype(args)>(args)...));
+			if(*this)
+				return std::forward<F>(fn)(std::forward<decltype(args)>(args)...);
+			else
+				return ret::err(error());
+		};
+	}
+	
 	void operator *() const { }
 	void value() const { }
 	nullptr_t operator ->() const
@@ -150,8 +163,7 @@ auto just()
 	return expected<T, Err>::just();
 }
 
-
-template<typename Arg, typename Err = std::string>
+template<typename Err = std::string, typename Arg>
 auto just(Arg&& arg)
 {
 	return expected<std::decay_t<Arg>, Err>::just(std::forward<Arg>(arg));
@@ -172,8 +184,8 @@ auto err(Args&& ... args)
  * @return
  */
 
-template<typename Fn, typename Err = std::string>
-auto boolean_lift(Fn&& f, const Err& error_msg)
+template<typename Err = std::string, typename Fn>
+auto boolean_lift(Fn&& f, const Err& error_msg = Err())
 {
 	return [&](auto&& ... args)->expected<void, Err> {
 		if(std::forward<Fn>(f)(std::forward<decltype(args)>(args)...))
