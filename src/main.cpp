@@ -27,8 +27,8 @@ void print_usage(const char* name)
 	std::cout << "usage: " << name << " <filename> <algorithm> [-n|--neighborhood] (lrud)" << std::endl;
 }
 
-//todo: testy
-//todo: argumenty (rychlost, apod.)
+//todo: unit testy
+//todo: statistiky (počet otevřených nodů, délka cesty ...)
 //todo: další algoritmy :)
 
 
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 	
 	if(!algorithm)
 	{
-		std::cout << "error picking algorithm: " << maze.error() << std::endl;
+		std::cout << "error picking algorithm: " << algorithm.error() << std::endl;
 		return 1;
 	}
 	runner r(std::move(*algorithm), *maze, options_result->options);

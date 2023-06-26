@@ -19,12 +19,6 @@ class printer : public term
 				print(p, with_blink()(with_fg_color(0, 0, 255)("o")));
 		};
 	}
-	auto step_callback()
-	{
-		return [&]() {
-			std::this_thread::sleep_for(sleep_duration_);
-		};
-	}
 	auto open_callback()
 	{
 		return [&](const coord& p) {
@@ -51,7 +45,6 @@ class printer : public term
 	void print_maze();
  private:
 	void parse_options(const std::vector<opt>& options);
-	std::chrono::milliseconds sleep_duration_ = std::chrono::milliseconds(15);
 	
 	const maze* maze_;
 	const pf_algorithm* algorithm_;

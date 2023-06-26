@@ -92,8 +92,8 @@ struct expected<void, Err>
 		Err err;
 	};
  public:
-	expected(bool v = true, std::string msg = "") : value_ {v ? std::optional<unexpected> {std::nullopt}
-															  : unexpected {std::move(msg)}} { }
+	expected(bool v, Err err) : value_ {v ? std::optional<unexpected> {std::nullopt}
+										  : unexpected {std::move(err)}} { }
 	template<typename ...Args>
 	static expected just(Args&& ... args)
 	{

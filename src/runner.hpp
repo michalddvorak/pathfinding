@@ -2,6 +2,7 @@
 
 
 #include "io/printer.hpp"
+#include "observers/delayer.hpp"
 
 class runner
 {
@@ -12,4 +13,5 @@ class runner
 	std::unique_ptr<pf_algorithm> algorithm_;
 	maze maze_;
 	printer printer_;
+	delayer delayer_;
 };
