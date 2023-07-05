@@ -27,10 +27,10 @@ class pf_algorithm
  public:
 	virtual ~pf_algorithm() = default;
 	virtual void run(const maze& maze) = 0;
-	template<typename T>
-	static auto make(const std::vector<opt>& options)
+	template<std::derived_from<pf_algorithm> T>
+	static std::unique_ptr<pf_algorithm> make(auto&& ... args)
 	{
-		return just<std::unique_ptr<pf_algorithm>>(std::make_unique<T>(options));
+		return std::make_unique<T>(FWD(args)...);
 	}
  protected:
 	using seen_matrix = matrix<int8_t>;

@@ -3,6 +3,9 @@
 #include <string>
 #include <variant>
 #include <functional>
+#include <concepts>
+
+#include "fwd.hpp"
 
 template<typename T=void, typename Err = std::string>
 struct expected
@@ -13,32 +16,28 @@ struct expected
 		Err err;
 	};
  public:
-	template<typename ...Args>
-	static expected just(Args&& ... args)
+	static expected just(auto&& ... args)
 	{
-		return expected {T {std::forward<Args>(args)...}};
+		return expected {T {FWD(args)...}};
 	}
-	template<typename ...Args>
-	static expected err(Args&& ... args)
+	static expected err(auto&& ... args)
 	{
-		return expected {unexpected {{std::forward<Args>(args)...}}};
+		return expected {unexpected {{FWD(args)...}}};
 	}
-	template<typename F, typename ...Args>
-	decltype(auto) and_then(F&& fn, Args&& ... args)&&
+	decltype(auto) and_then(auto&& fn, auto&& ... args)&&
 	{
-		using ret = decltype(std::forward<F>(fn)(std::move(value()), std::forward<Args>(args)...));
+		using ret = decltype(FWD(fn)(std::move(value()), FWD(args)...));
 		if(*this)
-			return std::forward<F>(fn)(std::move(value()), std::forward<Args>(args)...);
+			return FWD(fn)(std::move(value()), FWD(args)...);
 		else
 			return ret::err(std::move(error()));
 	}
 	
-	template<typename F, typename ...Args>
-	decltype(auto) and_then(F&& fn, Args&& ... args)&
+	decltype(auto) and_then(auto&& fn, auto&& ... args)&
 	{
-		using ret = decltype(std::forward<F>(fn)(value(), std::forward<Args>(args)...));
+		using ret = decltype(FWD(fn)(value(), FWD(args)...));
 		if(*this)
-			return std::forward<F>(fn)(value(), std::forward<Args>(args)...);
+			return FWD(fn)(value(), FWD(args)...);
 		else
 			return ret::err(error());
 	}
@@ -80,8 +79,8 @@ struct expected
 		return std::get<unexpected>(value_).err;
 	}
  private:
-	expected(std::variant<T, unexpected> v) : value_(std::move(v)) { }
-	std::variant<T, unexpected> value_ = T();
+	expected(std::variant<T, unexpected>&& value) : value_ {std::move(value)} { }
+	std::variant<T, unexpected> value_;
 };
 
 template<typename Err>
@@ -93,38 +92,22 @@ struct expected<void, Err>
 		Err err;
 	};
  public:
-	expected(bool v, Err err) : value_ {v ? std::optional<unexpected> {std::nullopt}
-										  : unexpected {std::move(err)}} { }
-	template<typename ...Args>
-	static expected just(Args&& ... args)
+	static expected just()
 	{
 		return expected {std::nullopt};
 	}
-	template<typename ...Args>
-	static expected err(Args&& ... args)
+	static expected err(auto&& ... args)
 	{
-		return expected {unexpected {{std::forward<Args>(args)...}}};
-	}
-	template<typename F, typename ...Args>
-	decltype(auto) and_then(F&& fn, Args&& ... args)
-	{
-		using ret = decltype(std::forward<F>(fn)(std::forward<Args>(args)...));
-		if(*this)
-			return std::forward<F>(fn)(std::forward<Args>(args)...);
-		else
-			return ret::err(error());
+		return expected {unexpected {{FWD(args)...}}};
 	}
 	
-	template<typename F>
-	decltype(auto) operator >>=(F&& fn)
+	decltype(auto) and_then(auto&& fn, auto&& ... args)
 	{
-		return [&](auto&& ... args) {
-			using ret = decltype(std::forward<F>(fn)(std::forward<decltype(args)>(args)...));
-			if(*this)
-				return std::forward<F>(fn)(std::forward<decltype(args)>(args)...);
-			else
-				return ret::err(error());
-		};
+		using ret = decltype(FWD(fn)(FWD(args)...));
+		if(*this)
+			return FWD(fn)(FWD(args)...);
+		else
+			return ret::err(error());
 	}
 	
 	void operator *() const { }
@@ -139,7 +122,7 @@ struct expected<void, Err>
 	}
 	operator bool() const
 	{
-		return value_ == std::nullopt;
+		return !value_.has_value();
 	}
 	const Err& error() const
 	{
@@ -150,7 +133,7 @@ struct expected<void, Err>
 		return value_->err;
 	}
  private:
-	expected(std::optional<unexpected> v) : value_(std::move(v)) { }
+	expected(std::optional<unexpected>&& v) : value_(std::move(v)) { }
 	std::optional<unexpected> value_ = std::nullopt;
 };
 
@@ -163,32 +146,32 @@ auto just()
 	return expected<T, Err>::just();
 }
 
-template<typename Err = std::string, typename Arg>
-auto just(Arg&& arg)
+template<typename Err = std::string>
+auto just(auto&& arg)
 {
-	return expected<std::decay_t<Arg>, Err>::just(std::forward<Arg>(arg));
+	return expected<std::decay_t<decltype(arg)>, Err>::just(FWD(arg));
 }
 
-template<typename T = void, typename Err = std::string, typename ...Args>
-auto err(Args&& ... args)
+template<typename T = void, typename Err = std::string>
+auto err(auto&& ...args)
 {
-	return expected<T, Err>::err(std::forward<Args>(args)...);
+	return expected<T, Err>::err(FWD(args)...);
 }
 
 /**
- * @brief Takes a function returning bool and lifts it to the expected<void> world with given error message
- * @tparam Fn
+ * @brief Takes a function returning bool and lifts it to the expected<void> world with given error message.
+ * Formally, given T... -> bool, Err, returns T... -> expected<void,Err>
  * @tparam Err
  * @param f
  * @param error_msg
  * @return
  */
 
-template<typename Err = std::string, typename Fn>
-auto boolean_lift(Fn&& f, const Err& error_msg = Err())
+template<typename Err = std::string>
+auto boolean_lift(auto&& fn, const Err& error_msg = Err())
 {
 	return [&](auto&& ... args)->expected<void, Err> {
-		if(std::forward<Fn>(f)(std::forward<decltype(args)>(args)...))
+		if(FWD(fn)(FWD(args)...))
 			return expected<void, Err>::just();
 		else
 			return expected<void, Err>::err(error_msg);

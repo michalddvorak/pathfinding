@@ -6,6 +6,8 @@
 #include <fstream>
 #include <sstream>
 #include "limits.h"
+#include "expected.hpp"
+
 
 /**
  * @brief Function determines whether two strings are same up to permutation of the individual symbols
@@ -57,11 +59,11 @@ inline expected<std::ifstream> open_file(const std::string& filename)
  * @return
  */
 template<typename T, typename Err=std::string>
-expected<T,Err> parse(const std::string& arg, const Err& error_message)
+expected<T, Err> parse(const std::string& arg, const Err& error_message)
 {
 	std::stringstream ss {arg};
 	T result;
 	if(!(ss >> result))
-		return err<T,Err>(error_message);
+		return err<T, Err>(error_message);
 	return just(result);
 }

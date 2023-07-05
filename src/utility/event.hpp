@@ -8,7 +8,7 @@
 template<typename ... Args>
 class event
 {
- public:
+ private:
 	struct callback_handle
 	{
 	 private:
@@ -16,18 +16,26 @@ class event
 		typename std::list<std::function<void(Args...)>>::iterator iter_;
 		friend class event;
 	};
-	template<typename... Ts>
-	void trigger(Ts&& ... args)
+ public:
+	void trigger(auto&& ... args)
 	{
 		for(auto&& callback: callbacks_)
-			callback(std::forward<Ts>(args)...);
+			callback(FWD(args)...);
 	}
-	void deregister_callback(callback_handle todel)
+	bool deregister_callback(std::any todel)
 	{
-		callbacks_.erase(todel.iter_);
+		try
+		{
+			callbacks_.erase(std::any_cast<callback_handle&>(todel).iter_);
+			return true;
+		}
+		catch(std::bad_any_cast& e)
+		{
+			return false;
+		}
 	}
 	template<typename Fn>
-	callback_handle register_callback(Fn&& callback)
+	std::any register_callback(Fn&& callback)
 	{
 		auto iter = callbacks_.insert(callbacks_.end(), std::forward<Fn>(callback));
 		return callback_handle {iter};

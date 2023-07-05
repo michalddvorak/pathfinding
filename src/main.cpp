@@ -14,9 +14,9 @@ expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, 
 	using namespace std::string_literals;
 	
 	if(equals_insensitive(name, "bfs"))
-		return pf_algorithm::make<bfs>(options);
+		return just(pf_algorithm::make<bfs>(options));
 	else if(equals_insensitive(name, "dfs"))
-		return pf_algorithm::make<dfs>(options);
+		return just(pf_algorithm::make<dfs>(options));
 	return err<std::unique_ptr<pf_algorithm>>("unknown algorithm \""s + name + "\"");
 }
 
