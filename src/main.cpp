@@ -33,6 +33,7 @@ void print_usage(const char* name)
 	std::cout << "usage: " << name << " <filename> <algorithm> [-n|--neighborhood] (lrud)" << std::endl;
 }
 
+//todo: BRIDGE pattern u term
 //todo: unit testy
 //todo: statistiky (počet otevřených nodů, délka cesty ...)
 //todo: další algoritmy :)
