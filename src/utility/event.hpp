@@ -34,10 +34,9 @@ class event
 			return false;
 		}
 	}
-	template<typename Fn>
-	std::any register_callback(Fn&& callback)
+	std::any register_callback(auto&& callback)
 	{
-		auto iter = callbacks_.insert(callbacks_.end(), std::forward<Fn>(callback));
+		auto iter = callbacks_.insert(callbacks_.end(), FWD(callback));
 		return callback_handle {iter};
 	}
  private:

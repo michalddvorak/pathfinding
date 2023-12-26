@@ -1,3 +1,5 @@
+51 71
+43 1 47 21
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 X   X                     X                                           X
 X X    XXXX X    XX X  X  XXXXX    X  X    X XX XXX X   XX        XXX X
@@ -49,5 +51,3 @@ X   X   X X X     X               X       X       X   X         X     X
 XXX   XXX X X X XX XXXXX X XX   X   XX  X   X  XX X XXX       X X XX XX
 X     X     X                                   X                     X
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-start 1, 43
-end 21, 47

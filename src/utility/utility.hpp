@@ -5,8 +5,11 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <ranges>
+#include <cstdarg>
 #include "limits.h"
 #include "expected.hpp"
+#include "overload.hpp"
 
 
 /**
@@ -52,18 +55,35 @@ inline expected<std::ifstream> open_file(const std::string& filename)
 
 /**
  * @brief Extract a variable of type T from a string
- * @tparam T
- * @tparam Err
- * @param arg
- * @param error_message
- * @return
  */
 template<typename T, typename Err=std::string>
-expected<T, Err> parse(const std::string& arg, const Err& error_message)
+expected<T, Err> parse_string(const std::string& arg, const Err& error_message = Err())
 {
 	std::stringstream ss {arg};
 	T result;
 	if(!(ss >> result))
 		return err<T, Err>(error_message);
-	return just(result);
+	return just<Err>(result);
 }
+
+inline void visit_each(std::ranges::range auto&& range, auto&& ... overloads)
+{
+	for(auto&& var: range)
+		std::visit(overload {FWD(overloads)...}, var);
+}
+
+inline std::string fmt(const char *f, ...) {
+    va_list args1;
+    va_list args2;
+    va_start(args1, f);
+    va_copy(args2, args1);
+    
+    std::string buf(vsnprintf(nullptr, 0, f, args1), '\0');
+    va_end(args1);
+    
+    vsnprintf(buf.data(), buf.size() + 1, f, args2);
+    va_end(args2);
+    
+    return buf;
+}
+

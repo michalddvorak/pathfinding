@@ -4,30 +4,7 @@
 #include <termios.h>
 #include "../coord.hpp"
 #include "../utility/fwd.hpp"
-
-struct rgb
-{
-	uint8_t r, g, b;
-};
-
-class graphics
-{
- public:
-	virtual ~graphics() = default;
-	virtual void print(const coord& pos, const std::string& str) = 0;
-	virtual void clear() = 0;
-	virtual void set_cursor(const coord& pos) = 0;
-	void print_all(const coord& pos, auto&& ... args)
-	{
-		std::stringstream ss;
-		(ss << ... << FWD(args));
-		return print(pos, ss.str());
-	}
-	virtual void print_with_fg_color(const coord& pos, const std::string& what, rgb color) = 0;
-	virtual void print_with_bg_color(const coord& pos, const std::string& what, rgb color) = 0;
-	virtual void print_with_blink(const coord& pos, const std::string& what, rgb color) = 0;
-};
-
+#include "../utility/rgb.hpp"
 
 struct term
 {
@@ -45,18 +22,18 @@ struct term
 		(std::cout << ... << args).flush();
 	}
 	static void clear();
-	
-	static constexpr auto with_fg_color(int r, int g, int b)
+ 
+	static constexpr auto with_fg_color(rgb color)
 	{
 		return [=](const std::string& what) {
-			return color_fg(r, g, b) + what + ATTR_END;
+			return color_fg(color) + what + ATTR_END;
 		};
 	}
 	
-	static constexpr auto with_bg_color(int r, int g, int b)
+	static constexpr auto with_bg_color(rgb color)
 	{
 		return [=](const std::string& what) {
-			return color_bg(r, g, b) + what + ATTR_END;
+			return color_bg(color) + what + ATTR_END;
 		};
 	}
 	static constexpr auto with_blink()
@@ -65,8 +42,8 @@ struct term
 	}
  private:
 	
-	static std::string color_bg(int r, int g, int b);
-	static std::string color_fg(int r, int g, int b);
+	static std::string color_bg(rgb color);
+	static std::string color_fg(rgb color);
 	void hide_cursor();
 	void init_terminal();
 	void restore_terminal();

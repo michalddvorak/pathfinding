@@ -1,13 +1,9 @@
 #include "delayer.hpp"
 
-#include "../utility/overload.hpp"
-
 void delayer::parse_options(const std::vector<opt>& options)
 {
-	for(const auto& option: options)
-		std::visit(overload {
-				[&](const opt_sleep_time& sleep_time)mutable { sleep_duration_ = sleep_time.duration; },
-		}, option);
+	visit_each(options,
+			   [&](const opt_sleep_time& sleep_time)mutable { sleep_duration_ = sleep_time.duration; });
 }
 delayer::delayer(pf_algorithm* algorithm, const std::vector<opt>& options) : algorithm_ {algorithm}
 {
