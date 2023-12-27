@@ -20,11 +20,13 @@ void dfs::run(const maze& maze)
 	};
 	
 	open_node(maze.start);
+    on_step();
 	
 	while(!q.empty())
 	{
-		on_step();
 		auto& [pos, begin, end] = q.top();
+        on_explore(pos);
+        on_step();
 		if(pos == maze.end)
 			break;
 		if(begin != end)
@@ -34,10 +36,12 @@ void dfs::run(const maze& maze)
 			{
 				on_step();
 				open_node(neigh, pos);
+                on_step();
 			}
 			continue;
 		}
 		on_closed(pos);
+        on_step();
 		q.pop();
 	}
 	if(seen(maze.end))
@@ -51,4 +55,9 @@ void dfs::parse_options(const std::vector<opt>& options)
 {
 	visit_each(options,
 			   [&](const opt_neighborhood_order& opt_order)mutable { neighborhood_order_ = opt_order.order; });
+}
+
+std::string dfs::description() const
+{
+    return "Depth First Search (DFS)";
 }

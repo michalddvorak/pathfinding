@@ -9,7 +9,7 @@
 
 struct opt_neighborhood_order
 {
-    std::array<std::function<coord(const coord&)>, 4> order = {&coord::left, &coord::down, &coord::right, &coord::up};
+    std::array<std::function<coord(const coord&)>, 4> order;
     
     static expected<opt_neighborhood_order> parse(const char* arg);
     

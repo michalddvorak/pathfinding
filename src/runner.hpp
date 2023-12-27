@@ -3,6 +3,7 @@
 
 #include "io/printer.hpp"
 #include "observers/delayer.hpp"
+#include "observers/statistics.hpp"
 
 class runner
 {
@@ -14,4 +15,5 @@ class runner
 	maze maze_;
 	printer printer_;
 	delayer delayer_;
+    statistics statistic_;
 };

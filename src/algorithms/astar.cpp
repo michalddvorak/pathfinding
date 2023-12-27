@@ -42,12 +42,14 @@ void astar::run(const maze& maze)
     };
     
     open_node(maze.start);
+    on_step();
     
     while (!q.empty())
     {
-        on_step();
         auto pos = q.top();
         q.pop();
+        on_explore(pos.vertex);
+        on_step();
         if (pos.vertex == maze.end)
             break;
         for (auto&& neigh: neighborhood_order_ | std::views::transform([&](auto&& fn) { return fn(pos.vertex); }))
@@ -56,12 +58,18 @@ void astar::run(const maze& maze)
                 maze.mat(neigh) == maze_object::free &&
                 dist(pos.vertex) + 1 < dist(neigh))
             {
-                on_step();
                 open_node(neigh, pos.vertex);
+                on_step();
             }
         }
         on_closed(pos.vertex);
+        on_step();
     }
     if (seen(maze.end))
         reconstruct_path(maze, prev);
+}
+
+std::string astar::description() const
+{
+    return "A*";
 }

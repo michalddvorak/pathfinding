@@ -22,9 +22,9 @@ class rands : public pf_algorithm
         v.erase(v.begin() + random_index);
         return ret;
     }
-    
+    std::string description() const override;
     void parse_options(const std::vector<opt>& opt_seed);
     
-    std::array<std::function<coord(const coord&)>, 4> neighborhood_order_;
+    
     std::mt19937 rng;
 };

@@ -9,11 +9,11 @@ class astar : public pf_algorithm
     void run(const maze& maze) override;
     
     astar(const std::vector<opt>& options);
+    std::string description() const override;
   
   private:
     void parse_options(const std::vector<opt>& opt_order);
     
-    std::array<std::function<coord(const coord&)>, 4> neighborhood_order_;
     std::function<double(const coord&, const coord&)> distance =
             [](const coord& a, const coord& b) -> double
             {

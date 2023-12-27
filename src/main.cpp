@@ -62,8 +62,6 @@ void print_usage(const char* name, std::ostream& os = std::cout)
 //todo: další algoritmy :)
 //todo: přidat memento, observer bude každý krok zachytavat do mementa -- více módů (volný běh, forward/backward rolling ...)
 
-#include "utility/zip_view.hpp"
-
 int main(int argc, char* argv[])
 {
     auto parse_result = parse_options(argc, argv);

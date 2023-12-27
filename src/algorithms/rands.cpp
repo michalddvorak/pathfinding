@@ -26,23 +26,33 @@ void rands::run(const maze& maze)
     };
     
     open_node(maze.start);
+    on_step();
     
     while (!q.empty())
     {
-        on_step();
         auto pos = erase_random(q);
+        on_explore(pos);
+        on_step();
+        
         if (pos == maze.end)
             break;
         for (auto&& neigh: neighborhood_order_ | std::views::transform([&](auto&& fn) { return fn(pos); }))
         {
             if (maze.mat.valid(neigh) && !seen(neigh) && maze.mat(neigh) == maze_object::free)
             {
-                on_step();
                 open_node(neigh, pos);
+                on_step();
             }
         }
         on_closed(pos);
+        on_step();
     }
     if (seen(maze.end))
         reconstruct_path(maze, prev);
 }
+
+std::string rands::description() const
+{
+    return "Random Search";
+}
+

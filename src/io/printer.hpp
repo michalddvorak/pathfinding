@@ -17,7 +17,7 @@ class printer : public term
         return [&](const coord& p)
         {
             if (p != maze_->start && p != maze_->end)
-                print(p, with_blink()(with_fg_color({.r = 0, .g = 0, .b = 255})("o")));
+                print(p, PATH);
         };
     }
     
@@ -26,7 +26,7 @@ class printer : public term
         return [&](const coord& p)
         {
             if (p != maze_->start && p != maze_->end)
-                print(p, with_fg_color({.r = 255, .g = 0, .b = 0})("O"));
+                print(p, OPEN);
         };
     }
     
@@ -35,7 +35,7 @@ class printer : public term
         return [&](const coord& p)
         {
             if (p != maze_->start && p != maze_->end)
-                print(p, with_fg_color({.r = 255, .g = 0, .b = 255})("#"));
+                print(p, CLOSED);
         };
     }
     
@@ -47,15 +47,31 @@ class printer : public term
                 print(p, " ");
         };
     }
+    
+    auto explore_callback()
+    {
+        return [&](const coord& p)
+        {
+            if (p != maze_->start && p != maze_->end)
+                print(p, EXPLORING);
+        };
+    }
   
   public:
     printer(const maze* maze, pf_algorithm* algorithm, const std::vector<opt>& options);
     
+    void print_description();
     void print_maze();
   
   private:
     void parse_options(const std::vector<opt>& options);
-    
+    const static std::string EXPLORING;
+    const static std::string OPEN;
+    const static std::string CLOSED;
+    const static std::string START;
+    const static std::string END;
+    const static std::string WALL;
+    const static std::string PATH;
     const maze* maze_;
     const pf_algorithm* algorithm_;
 };

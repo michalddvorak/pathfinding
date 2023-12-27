@@ -22,4 +22,6 @@ add_executable(pathfinding src/main.cpp src/matrix.hpp src/maze.cpp src/maze.hpp
         src/options/concrete_options/help.cpp
         src/options/concrete_options/help.hpp
         src/utility/zip_view.hpp
+        src/observers/statistics.cpp
+        src/observers/statistics.hpp
 )

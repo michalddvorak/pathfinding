@@ -3,15 +3,15 @@
 void pf_algorithm::reconstruct_path(const maze& maze, const matrix<coord>& prev)
 {
 	auto cur = maze.end;
-	on_step();
 	on_path(cur);
+    on_step();
 	while(true)
 	{
 		if(cur == maze.start)
 			break;
 		cur = prev(cur);
-		on_step();
 		on_path(cur);
+        on_step();
 	}
 }
 std::pair<pf_algorithm::prev_matrix, pf_algorithm::seen_matrix> pf_algorithm::fresh_all(const maze& maze)
