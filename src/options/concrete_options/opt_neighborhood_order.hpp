@@ -3,9 +3,9 @@
 #include <string>
 #include <map>
 #include <getopt.h>
-#include "../utility/utility.hpp"
-#include "../utility/expected.hpp"
-#include "../coord.hpp"
+#include "../../utility/utility.hpp"
+#include "../../utility/expected.hpp"
+#include "../../coord.hpp"
 
 struct opt_neighborhood_order
 {

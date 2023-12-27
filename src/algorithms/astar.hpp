@@ -11,9 +11,9 @@ class astar : public pf_algorithm
     astar(const std::vector<opt>& options);
   
   private:
-    void parse_options(const std::vector<opt>& options);
+    void parse_options(const std::vector<opt>& opt_order);
     
-    opt_neighborhood_order neighborhood_order_;
+    std::array<std::function<coord(const coord&)>, 4> neighborhood_order_;
     std::function<double(const coord&, const coord&)> distance =
             [](const coord& a, const coord& b) -> double
             {

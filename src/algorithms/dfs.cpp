@@ -6,13 +6,13 @@
 void dfs::run(const maze& maze)
 {
 	
-	using iter = decltype(std::begin(neighborhood_order_.order));
+	using iter = decltype(std::begin(neighborhood_order_));
 	std::stack<std::tuple<coord, iter, iter>> q;
 	
 	auto [prev, seen] = fresh_all(maze);
 	
 	auto open_node = [&](const coord& node, const std::optional<coord>& parent = std::nullopt) {
-		q.emplace(node, std::begin(neighborhood_order_.order), std::end(neighborhood_order_.order));
+		q.emplace(node, std::begin(neighborhood_order_), std::end(neighborhood_order_));
 		seen(node) = true;
 		if(parent)
 			prev(node) = *parent;
@@ -50,5 +50,5 @@ dfs::dfs(const std::vector<opt>& options)
 void dfs::parse_options(const std::vector<opt>& options)
 {
 	visit_each(options,
-			   [&](const opt_neighborhood_order& order)mutable { neighborhood_order_ = order; });
+			   [&](const opt_neighborhood_order& opt_order)mutable { neighborhood_order_ = opt_order.order; });
 }

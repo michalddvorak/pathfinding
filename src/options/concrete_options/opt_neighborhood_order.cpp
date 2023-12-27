@@ -1,5 +1,5 @@
 #include "opt_neighborhood_order.hpp"
-#include "opt_util.hpp"
+#include "../opt_util.hpp"
 
 expected<opt_neighborhood_order> opt_neighborhood_order::parse(const char* arg)
 {

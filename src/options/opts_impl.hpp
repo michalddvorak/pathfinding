@@ -10,35 +10,12 @@
 #include "../utility/expected.hpp"
 #include "../utility/utility.hpp"
 
+#include "opts_concepts.hpp"
 
 using getopt_option = option;
 
-template <typename T>
-concept parseable =
-requires(const char* arg)
-{
-    { T::parse(arg) } -> std::same_as<expected<T>>;
-};
 
-template <typename T>
-concept has_opt =
-requires
-{
-    { T::opt } -> std::convertible_to<getopt_option>;
-};
-
-template <typename T>
-concept option_like = parseable<T> &&
-                      has_opt<T> &&
-                      requires
-                      {
-                          { T::help_message() } -> std::same_as<std::pair<std::string, std::string>>;
-                      };
-
-template <typename T>
-concept help_like = has_opt<T>;
-
-template <option_like ... Options>
+template <option_like<getopt_option> ... Options>
 struct options_impl
 {
     using opt = std::variant<Options...>;
@@ -53,7 +30,7 @@ struct options_impl
 
 namespace detail
 {
-    template <option_like Option, option_like ...Options> requires (std::is_same_v<Option, Options> || ...)
+    template <option_like<getopt_option> Option, option_like<getopt_option> ...Options> requires (std::is_same_v<Option, Options> || ...)
     
     struct expected_variant_lift
     {
@@ -70,7 +47,7 @@ namespace detail
     };
 }
 
-template <help_like Help, option_like ... Options>
+template <help_like<getopt_option> Help, option_like<getopt_option> ... Options>
 struct option_parser
 {
     static std::variant<Help, expected<options_impl<Options...>>> parse(int argc, char* argv[])

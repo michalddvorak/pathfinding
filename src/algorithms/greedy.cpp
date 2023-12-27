@@ -4,7 +4,7 @@
 void greedy::parse_options(const std::vector<opt>& options)
 {
     visit_each(options,
-               [&](const opt_neighborhood_order& order)mutable { neighborhood_order_ = order; });
+               [&](const opt_neighborhood_order& opt_order)mutable { neighborhood_order_ = opt_order.order; });
 }
 
 greedy::greedy(const std::vector<opt>& options)
@@ -50,7 +50,7 @@ void greedy::run(const maze& maze)
         q.pop();
         if (pos.vertex == maze.end)
             break;
-        for (auto&& neigh_fn: neighborhood_order_.order)
+        for (auto&& neigh_fn: neighborhood_order_)
         {
             auto&& neigh = neigh_fn(pos.vertex);
             if (maze.mat.valid(neigh) &&

@@ -24,21 +24,21 @@ expected<std::unique_ptr<pf_algorithm>> pick_algorithm(const std::string& name, 
         return just(pf_algorithm::make<dfs>(options));
     else if (equals_insensitive(name, "random"))
         return just(pf_algorithm::make<rands>(options));
-    else if(equals_insensitive(name,"astar"))
+    else if (equals_insensitive(name, "astar"))
         return just(pf_algorithm::make<astar>(options));
-    else if(equals_insensitive(name,"greedy"))
+    else if (equals_insensitive(name, "greedy"))
         return just(pf_algorithm::make<greedy>(options));
     return err<std::unique_ptr<pf_algorithm>>("unknown algorithm \""s + name + "\"");
 }
 
 namespace detail
 {
-    template <typename... Options>
+    template <has_help_message... Options>
     struct usage_helper
     {
-        static std::vector<std::pair<std::string, std::string>> help_message()
+        static auto help_message()
         {
-            return {Options::help_message()...};
+            return std::array {Options::help_message()...};
         }
     };
 }
@@ -46,10 +46,10 @@ namespace detail
 void print_usage(const char* name, std::ostream& os = std::cout)
 {
     os << "usage: " << name << " <filename> <algorithm> OPTIONS" << std::endl;
-    auto opts = all_options::apply<detail::usage_helper>::help_message();
+    auto opts = extended_options::apply<detail::usage_helper>::help_message();
     size_t maxw = 0;
-    for (auto& opt: opts)
-        maxw = std::max(maxw, opt.first.size());
+    for (auto& [opt, _]: opts)
+        maxw = std::max(maxw, opt.size());
     
     os << "The options are:" << std::endl;
     for (auto& [opt, desc]: opts)

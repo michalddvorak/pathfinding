@@ -1,5 +1,5 @@
 #include "opt_seed.hpp"
-#include "opt_util.hpp"
+#include "../opt_util.hpp"
 
 expected<opt_seed> opt_seed::parse(const char* arg)
 {

@@ -3,8 +3,8 @@
 void rands::parse_options(const std::vector<opt>& options)
 {
     visit_each(options,
-               [&](const opt_neighborhood_order& order)mutable { neighborhood_order_ = order; },
-               [&](const opt_seed& seed) mutable { rng.seed(seed.seed); });
+               [&](const opt_neighborhood_order& opt_order)mutable { neighborhood_order_ = opt_order.order; },
+               [&](const opt_seed& opt_seed) mutable { rng.seed(opt_seed.seed); });
 }
 
 rands::rands(const std::vector<opt>& options)
@@ -33,7 +33,7 @@ void rands::run(const maze& maze)
         auto pos = erase_random(q);
         if (pos == maze.end)
             break;
-        for (auto&& neigh_fn: neighborhood_order_.order)
+        for (auto&& neigh_fn: neighborhood_order_)
         {
             auto&& neigh = neigh_fn(pos);
             if (maze.mat.valid(neigh) && !seen(neigh) && maze.mat(neigh) == maze_object::free)

@@ -24,7 +24,7 @@ void bfs::run(const maze& maze)
 		q.pop();
 		if(pos == maze.end)
 			break;
-		for(auto&& neigh_fn: neighborhood_order_.order)
+		for(auto&& neigh_fn: neighborhood_order_)
 		{
 			auto&& neigh = neigh_fn(pos);
 			if(maze.mat.valid(neigh) && !seen(neigh) && maze.mat(neigh) == maze_object::free)
@@ -45,5 +45,5 @@ bfs::bfs(const std::vector<opt>& options)
 void bfs::parse_options(const std::vector<opt>& options)
 {
 	visit_each(options,
-			   [&](const opt_neighborhood_order& order)mutable { neighborhood_order_ = order; });
+			   [&](const opt_neighborhood_order& opt_order)mutable { neighborhood_order_ = opt_order.order; });
 }

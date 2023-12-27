@@ -23,8 +23,8 @@ class rands : public pf_algorithm
         return ret;
     }
     
-    void parse_options(const std::vector<opt>& options);
+    void parse_options(const std::vector<opt>& opt_seed);
     
-    opt_neighborhood_order neighborhood_order_;
+    std::array<std::function<coord(const coord&)>, 4> neighborhood_order_;
     std::mt19937 rng;
 };
