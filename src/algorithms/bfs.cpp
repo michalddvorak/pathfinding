@@ -24,9 +24,8 @@ void bfs::run(const maze& maze)
 		q.pop();
 		if(pos == maze.end)
 			break;
-		for(auto&& neigh_fn: neighborhood_order_)
+        for (auto&& neigh : neighborhood_order_ | std::views::transform([&](auto&& fn) { return fn(pos); }))
 		{
-			auto&& neigh = neigh_fn(pos);
 			if(maze.mat.valid(neigh) && !seen(neigh) && maze.mat(neigh) == maze_object::free)
 			{
 				on_step();

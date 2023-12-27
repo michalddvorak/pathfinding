@@ -26,6 +26,6 @@ expected<opt_neighborhood_order> opt_neighborhood_order::parse(const char* arg)
 
 std::pair<std::string, std::string> opt_neighborhood_order::help_message()
 {
-    return {construct_argument_help(opt, "PERM"),
+    return {construct_argument_help(opt_info, "PERM"),
             "PERM is a permutation of \"lrud\" and this modifies the order in which the neighborhood is traversed in all algorithms"};
 }

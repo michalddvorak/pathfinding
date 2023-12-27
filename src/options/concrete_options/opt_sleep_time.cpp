@@ -14,5 +14,5 @@ expected<opt_sleep_time> opt_sleep_time::parse(const char* arg)
 
 std::pair<std::string, std::string> opt_sleep_time::help_message()
 {
-    return {construct_argument_help(opt, "NUM"), "sets the delay on each operation"};
+    return {construct_argument_help(opt_info, "NUM"), "sets the delay on each operation"};
 }

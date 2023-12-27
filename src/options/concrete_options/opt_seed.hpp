@@ -12,5 +12,5 @@ struct opt_seed
     
     static std::pair<std::string, std::string> help_message();
     
-    static constexpr struct option opt = {.name = "seed", .has_arg = required_argument, .flag=nullptr, .val='d'};
+    static constexpr struct option opt_info = {.name = "seed", .has_arg = required_argument, .flag=nullptr, .val='d'};
 };

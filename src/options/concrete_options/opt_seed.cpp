@@ -14,5 +14,5 @@ expected<opt_seed> opt_seed::parse(const char* arg)
 
 std::pair<std::string, std::string> opt_seed::help_message()
 {
-    return {construct_argument_help(opt, "NUM"), "seeds the random number generator"};
+    return {construct_argument_help(opt_info, "NUM"), "seeds the random number generator"};
 }

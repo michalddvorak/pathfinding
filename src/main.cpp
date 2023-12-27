@@ -60,8 +60,9 @@ void print_usage(const char* name, std::ostream& os = std::cout)
 //todo: unit testy
 //todo: statistiky (počet otevřených nodů, délka cesty ...)
 //todo: další algoritmy :)
+//todo: přidat memento, observer bude každý krok zachytavat do mementa -- více módů (volný běh, forward/backward rolling ...)
 
-
+#include "utility/zip_view.hpp"
 
 int main(int argc, char* argv[])
 {

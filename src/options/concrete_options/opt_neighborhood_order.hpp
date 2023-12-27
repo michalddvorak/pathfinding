@@ -15,5 +15,5 @@ struct opt_neighborhood_order
     
     static std::pair<std::string, std::string> help_message();
     
-    static constexpr struct option opt = {.name = "neighborhood", .has_arg = required_argument, .flag=nullptr, .val = 'n'};
+    static constexpr struct option opt_info = {.name = "neighborhood", .has_arg = required_argument, .flag=nullptr, .val = 'n'};
 };

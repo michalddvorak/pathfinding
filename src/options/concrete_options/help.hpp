@@ -8,5 +8,5 @@ struct help
 {
     static std::pair<std::string, std::string> help_message();
     
-    static constexpr struct option opt = {.name = "help", .has_arg = no_argument, .flag = nullptr, .val = 'h'};
+    static constexpr struct option opt_info = {.name = "help", .has_arg = no_argument, .flag = nullptr, .val = 'h'};
 };

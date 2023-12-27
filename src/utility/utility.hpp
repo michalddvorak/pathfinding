@@ -71,17 +71,20 @@ inline void visit_each(std::ranges::range auto&& range, auto&& ... overloads)
 	for(auto&& var: range)
 		std::visit(overload {FWD(overloads)...}, var);
 }
-
-inline std::string fmt(const char *f, ...) {
+/**
+ * Formats the given string simillarly to sprintf, but returns
+ * std::string with the result
+ */
+inline std::string fmt(const char *format, ...) {
     va_list args1;
     va_list args2;
-    va_start(args1, f);
+    va_start(args1, format);
     va_copy(args2, args1);
     
-    std::string buf(vsnprintf(nullptr, 0, f, args1), '\0');
+    std::string buf(vsnprintf(nullptr, 0, format, args1), '\0');
     va_end(args1);
     
-    vsnprintf(buf.data(), buf.size() + 1, f, args2);
+    vsnprintf(buf.data(), buf.size() + 1, format, args2);
     va_end(args2);
     
     return buf;

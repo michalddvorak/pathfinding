@@ -12,7 +12,7 @@ template <typename T, typename OptionInfo>
 concept has_opt =
 requires
 {
-    { T::opt } -> std::convertible_to<OptionInfo>;
+    { T::opt_info } -> std::convertible_to<OptionInfo>;
 };
 
 template <typename T>

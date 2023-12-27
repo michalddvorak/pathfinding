@@ -11,5 +11,5 @@ struct opt_sleep_time
     
     static expected<opt_sleep_time> parse(const char* arg);
     static std::pair<std::string,std::string> help_message();
-    static constexpr struct option opt = {.name = "sleep_time", .has_arg = required_argument, .flag=nullptr, .val='s'};
+    static constexpr struct option opt_info = {.name = "sleep_time", .has_arg = required_argument, .flag=nullptr, .val='s'};
 };

@@ -1,6 +1,6 @@
 #include <queue>
 #include "greedy.hpp"
-
+#include <ranges>
 void greedy::parse_options(const std::vector<opt>& options)
 {
     visit_each(options,
@@ -50,9 +50,8 @@ void greedy::run(const maze& maze)
         q.pop();
         if (pos.vertex == maze.end)
             break;
-        for (auto&& neigh_fn: neighborhood_order_)
+        for (auto&& neigh : neighborhood_order_ | std::views::transform([&](auto&& fn) { return fn(pos.vertex); }))
         {
-            auto&& neigh = neigh_fn(pos.vertex);
             if (maze.mat.valid(neigh) &&
                 maze.mat(neigh) == maze_object::free &&
                 dist(pos.vertex) + 1 < dist(neigh))
