@@ -5,4 +5,4 @@
 
 std::string construct_shortopts(const struct option* long_opts);
 
-std::string construct_argument_help(const struct option& opt);
+std::string construct_argument_help(const struct option& opt, const std::string& arg_name = "ARG");

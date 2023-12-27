@@ -13,4 +13,9 @@ add_executable(pathfinding src/main.cpp src/matrix.hpp src/maze.cpp src/maze.hpp
         src/algorithms/greedy.cpp
         src/algorithms/greedy.hpp
         src/options/opt_util.hpp
-        src/options/opt_util.cpp)
+        src/options/opt_util.cpp
+        src/options/opts_impl.hpp
+        src/options/opt_neighborhood_order.cpp
+        src/options/opt_seed.cpp
+        src/options/opt_sleep_time.cpp
+)

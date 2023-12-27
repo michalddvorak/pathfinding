@@ -1,4 +1,4 @@
-#include <thread>
+
 #include <sstream>
 #include <array>
 #include <iomanip>
@@ -66,7 +66,7 @@ void print_usage(const char* name, std::ostream& os = std::cout)
 int main(int argc, char* argv[])
 {
     auto parse_result = parse_options(argc, argv);
-    if (std::holds_alternative<help_tag>(parse_result))
+    if (std::holds_alternative<help>(parse_result))
     {
         print_usage(argv[0]);
         return 0;

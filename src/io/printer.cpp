@@ -1,7 +1,7 @@
 #include "printer.hpp"
 
 printer::printer(const maze* maze, pf_algorithm* algorithm, const std::vector<opt>& options) : maze_ {maze},
-                                                                                               algorithm_ {algorithm}
+                                                                                                       algorithm_ {algorithm}
 {
     parse_options(options);
     algorithm->register_path(path_callback());

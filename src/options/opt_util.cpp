@@ -14,7 +14,10 @@ std::string construct_shortopts(const struct option* long_opts)
     return res;
 }
 
-std::string construct_argument_help(const struct option& opt)
+std::string construct_argument_help(const struct option& opt, const std::string& arg_name)
 {
-    return fmt("-%c|--%s%s", opt.val, opt.name, opt.has_arg == required_argument ? " ARG" : "");
+    return fmt("-%c|--%s%s",
+               opt.val,
+               opt.name,
+               opt.has_arg == required_argument ? fmt(" %s", arg_name.c_str()).c_str() : "");
 }
